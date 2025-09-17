@@ -1,11 +1,5 @@
 import Link from 'next/link';
-
-type Post = {
-  slug: string;
-  title: string;
-  excerpt: string;
-  date: string;
-};
+import type { Post } from '@/lib/posts';
 
 const posts: Post[] = [
   {
@@ -32,13 +26,21 @@ export const metadata = {
   title: 'Articles',
 };
 
-export default function PostsPage() {
+export default async function PostsPage() {
+  // Fetch posts from API instead of static array
+  const res = await fetch('http://localhost:3000/api/posts', {
+    cache: 'no-store',
+  });
+  if (!res.ok) {
+    throw new Error('Failed to fetch posts');
+  }
+  const posts: Post[] = await res.json();
   return (
     <section className="space-y-8">
       <header className="space-y-2">
         <h1 className="text-3xl font-bold tracking-tight">Articles</h1>
         <p className="text-neutral-300 text-sm">
-          Liste statique d&apos;exemples (Server Component).
+          Loaded from <code>/api/posts</code> API.
         </p>
       </header>
 
